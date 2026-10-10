@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Earned</title>
+<meta name="description" content="Your phone stays locked until you've done the one thing that matters today.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1B2433;        /* locked: slate night */
+  --bg2:#243246;
+  --ink:#F2EFE9;
+  --mute:#A7B0BF;
+  --amber:#FFB454;     /* unlocked: dawn */
+  --amber-ink:#1B1406;
+  --line:rgba(242,239,233,.14);
+  --max:440px;
+}
+:root[data-state="unlocked"]{
+  --bg:#2E4866;
+  --bg2:#3A587A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:"Bricolage Grotesque",system-ui,sans-serif;
+  font-size:17px;line-height:1.5;
+  transition:background .9s ease;
+  min-height:100vh;
+}
+main{max-width:var(--max);margin:0 auto;padding:28px 20px 72px}
+h1,h2,h3{font-weight:700;line-height:1.08;letter-spacing:-.015em}
+h1{font-size:clamp(30px,8.4vw,38px);font-variation-settings:"wdth" 90}
+h2{font-size:24px;margin-bottom:14px}
+p{max-width:34em}
+.mute{color:var(--mute)}
+a{color:inherit}
+
+/* brand mark */
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;color:var(--mute);margin-bottom:34px}
+.brand svg{width:18px;height:18px}
+
+/* lock mock: the one bold element */
+.lock{
+  border:1px solid var(--line);border-radius:28px;
+  background:linear-gradient(180deg,var(--bg2),var(--bg));
+  padding:26px 22px 22px;margin:26px 0 30px;
+  transition:background .9s ease,border-color .9s ease;
+  position:relative;overflow:hidden;
+}
+:root[data-state="unlocked"] .lock{border-color:rgba(255,180,84,.55)}
+.lock .time{font-size:54px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variation-settings:"wdth" 80}
+.lock .date{color:var(--mute);font-size:14px;margin-top:4px}
+.lock .status{
+  display:flex;align-items:center;gap:10px;margin-top:22px;
+  font-size:15px;font-weight:600;color:var(--amber)
+}
+.lock .status svg{width:16px;height:16px;flex:none}
+.tasks{list-style:none;margin-top:18px;display:grid;gap:8px}
+.tasks li{display:flex}
+.tasks button{
+  all:unset;cursor:pointer;flex:1;display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:14px;border:1px solid var(--line);
+  font:inherit;font-size:16px;color:var(--ink);
+  transition:background .25s,border-color .25s,color .25s;
+}
+.tasks button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.tasks .box{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--mute);flex:none;display:grid;place-items:center;transition:background .25s,border-color .25s}
+.tasks .box svg{width:14px;height:14px;opacity:0;transition:opacity .2s}
+.tasks button[aria-pressed="true"]{border-color:rgba(255,180,84,.5)}
+.tasks button[aria-pressed="true"] .box{background:var(--amber);border-color:var(--amber)}
+.tasks button[aria-pressed="true"] .box svg{opacity:1}
+.tasks button[aria-pressed="true"] span.t{color:var(--mute);text-decoration:line-through;text-decoration-color:rgba(167,176,191,.6)}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px;filter:grayscale(1) opacity(.35);transition:filter .9s ease}
+:root[data-state="unlocked"] .apps{filter:none}
+.apps div{aspect-ratio:1;border-radius:16px;background:var(--c)}
+.hint{font-size:14px;color:var(--mute);margin-top:14px}
+:root[data-state="unlocked"] .hint{color:var(--amber)}
+
+/* CTA */
+.cta{
+  display:block;width:100%;text-align:center;
+  background:var(--amber);color:var(--amber-ink);
+  border:0;border-radius:16px;padding:17px 18px;
+  font:inherit;font-weight:700;font-size:18px;cursor:pointer;
+  text-decoration:none;
+}
+.cta:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.cta.quiet{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:600}
+.under{font-size:14px;color:var(--mute);text-align:center;margin-top:10px}
+
+section{margin-top:52px}
+.steps{list-style:none;display:grid;gap:18px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start}
+.steps li::before{counter-increment:s;content:counter(s);width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-weight:600;font-size:15px;color:var(--mute)}
+.steps strong{display:block;margin-bottom:2px}
+
+.price{border:1px solid var(--line);border-radius:22px;padding:22px 20px}
+.price .big{font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.price .big small{font-size:16px;font-weight:500;color:var(--mute);letter-spacing:0;margin-left:4px}
+.price .or{color:var(--mute);margin:8px 0 16px;font-size:15px}
+.price ul{list-style:none;display:grid;gap:8px;margin:16px 0 20px;font-size:15px}
+.price li{display:flex;gap:10px;align-items:start}
+.price li svg{width:16px;height:16px;flex:none;margin-top:4px;color:var(--amber)}
+
+details{border-top:1px solid var(--line);padding:16px 0}
+details:last-of-type{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::after{content:"+";color:var(--mute);font-weight:400}
+details[open] summary::after{content:"–"}
+details p{margin-top:10px;color:var(--mute);font-size:16px}
+
+form{display:grid;gap:10px}
+label{font-size:15px;color:var(--mute)}
+input,select{
+  width:100%;font:inherit;font-size:16px;color:var(--ink);
+  background:transparent;border:1px solid var(--line);border-radius:12px;padding:13px 14px;
+}
+input:focus-visible,select:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+select option{color:#111}
+.ok{display:none;color:var(--amber);font-weight:600}
+footer{margin-top:56px;font-size:13px;color:var(--mute)}
+footer a{color:var(--mute)}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    Earned
+  </div>
+
+  <h1 id="h1">Your phone stays locked until your three anchors are done.</h1>
+  <p class="mute" id="sub" style="margin-top:14px;font-size:18px">Meds. Water. One task. Then the apps open.</p>
+
+  <div class="lock" aria-label="Lock screen demo">
+    <div class="time" id="clock">7:42</div>
+    <div class="date" id="date">Friday 10 October</div>
+    <div class="status" id="status">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      <span id="statusText">Locked until today's anchors are done</span>
+    </div>
+    <ul class="tasks" id="tasks"></ul>
+    <div class="apps" aria-hidden="true">
+      <div style="--c:#5BA4F5"></div><div style="--c:#E95D8A"></div><div style="--c:#F0C14B"></div><div style="--c:#4CC38A"></div>
+    </div>
+    <p class="hint" id="hint">Tap the boxes. That's the whole app.</p>
+  </div>
+
+  <a class="cta" id="cta1" href="#price">Start the 7-day trial</a>
+  <p class="under">Then £34.99 a year. Cancel any time in the trial and pay nothing.</p>
+
+  <section>
+    <h2>How it works</h2>
+    <ol class="steps" id="steps"></ol>
+  </section>
+
+  <section id="price">
+    <h2>One price. No tiers.</h2>
+    <div class="price">
+      <div class="big">£34.99<small>a year</small></div>
+      <div class="or">or £5.99 a week if you'd rather</div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span>7 days free. Your card is only charged on day 8.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span id="bullet2">Pick your three anchors. Change them whenever.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span>Emergency calls and two apps of your choice always stay open.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span>Android and web first. iPhone follows once Apple approves the lock permission.</span></li>
+      </ul>
+      <a class="cta" id="ctaYear" href="#">Start the 7-day trial</a>
+      <p class="under">Secure checkout by Stripe. Refund any charge in the first 30 days, no questions.</p>
+      <a class="cta quiet" id="ctaWeek" href="#" style="margin-top:12px">Try it weekly instead</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Questions</h2>
+    <details><summary>What if I genuinely need my phone?</summary><p>Phone, Messages, Maps and two apps you choose stay open. Everything else waits until you've done your thing. There's a 3-minute emergency unlock, once a day.</p></details>
+    <details><summary>Can't I just cheat and tick the boxes?</summary><p>Yes. Nothing stops you. People who buy this don't want to cheat, they want a speed bump between waking up and the feed. The box is the speed bump.</p></details>
+    <details><summary>Why not a free app blocker?</summary><p>Free blockers block on a schedule. This one unlocks on a behaviour. The lock is tied to the thing you actually want to do, not to a clock.</p></details>
+    <details><summary>When do I get it?</summary><p>Trials starting now get access as the first group, within 4 weeks. Your card isn't charged until you've had the app for 7 days. If we're late, your trial start moves with it.</p></details>
+  </section>
+
+  <section>
+    <h2>Not ready to try it?</h2>
+    <p class="mute" style="margin-bottom:16px">Tell us one thing and we'll email you once when it's out.</p>
+    <form id="waitlist" method="POST" action="FORM_ENDPOINT">
+      <input type="hidden" name="hook" id="hookField">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
+      <label for="q" id="qLabel">What usually breaks your morning?</label>
+      <select id="q" name="answer" required></select>
+      <button class="cta quiet" type="submit">Email me once</button>
+      <p class="ok" id="ok">Done. One email, when it's ready.</p>
+    </form>
+  </section>
+
+  <footer>
+    Earned is being built by a solo developer. Pricing shown is the launch price. <a href="#" id="contact">Contact</a>
+  </footer>
+</main>
+
+<script>
+/* ---------- CONFIG: paste real links here before launch ---------- */
+const CONFIG = {
+  pixelId: "META_PIXEL_ID",                 // Meta pixel id, or leave to disable
+  formEndpoint: "FORM_ENDPOINT",            // e.g. https://formspree.io/f/xxxx
+  contactEmail: "CONTACT_EMAIL",
+  stripe: {                                 // Stripe Payment Links with 7-day trial, card required
+    adhd: { year: "STRIPE_LINK_ADHD_YEAR", week: "STRIPE_LINK_ADHD_WEEK" },
+    read: { year: "STRIPE_LINK_READ_YEAR", week: "STRIPE_LINK_READ_WEEK" },
+    gym:  { year: "STRIPE_LINK_GYM_YEAR",  week: "STRIPE_LINK_GYM_WEEK"  },
+  }
+};
+
+/* ---------- HOOK COPY: the only thing that varies between tests ---------- */
+const HOOKS = {
+  adhd: {
+    h1: "Your phone stays locked until your three anchors are done.",
+    sub: "Meds. Water. One task. Then the apps open.",
+    status: "Locked until today's anchors are done",
+    tasks: ["Take meds", "Drink a glass of water", "Do the one task you wrote last night"],
+    bullet2: "Pick your three anchors. Change them whenever.",
+    steps: [
+      ["Pick three anchors", "The three small things that make an ADHD day work. Most people pick meds, water, one task."],
+      ["Wake up to a lock", "Phone, Messages and Maps work. Everything else is greyed out until the anchors are ticked."],
+      ["Tick them, phone opens", "No streaks, no shame screens. Just a speed bump between waking up and the feed."]
+    ],
+    qLabel: "What usually breaks your morning?",
+    options: ["Scrolling before I'm even up", "Forgetting meds", "Starting six things, finishing none", "Something else"]
+  },
+  read: {
+    h1: "Your phone stays locked until you've read ten pages.",
+    sub: "Open a book first. Then the apps open.",
+    status: "Locked until today's pages are read",
+    tasks: ["Read 10 pages", "Log the book"],
+    bullet2: "Set your daily pages or minutes. Change it whenever.",
+    steps: [
+      ["Set your daily pages", "Ten pages, or ten minutes. Whatever gets you back into books."],
+      ["Wake up to a lock", "Phone, Messages and Maps work. Everything else waits until you've read."],
+      ["Log it, phone opens", "A book finished a month, without willpower. The lock does the remembering."]
+    ],
+    qLabel: "What stops you reading?",
+    options: ["I reach for my phone instead", "I'm too tired by the evening", "I start books and don't finish", "Something else"]
+  },
+  gym: {
+    h1: "Your phone stays locked until today's workout is logged.",
+    sub: "Move first. Scroll after.",
+    status: "Locked until today's workout is logged",
+    tasks: ["Log today's workout", "Hit 8,000 steps (or a rest day, once a week)"],
+    bullet2: "Workout, steps or a rest day. You set the rule.",
+    steps: [
+      ["Set the rule", "A logged workout, a step goal, or either. One planned rest day a week counts."],
+      ["Wake up to a lock", "Phone, Messages, Maps and your music app work. Social and games wait."],
+      ["Log it, phone opens", "The scroll becomes the reward for moving, instead of the reason you didn't."]
+    ],
+    qLabel: "What usually makes you skip?",
+    options: ["I scroll in bed and lose the morning", "Evenings disappear", "I don't feel like it on the day", "Something else"]
+  }
+};
+
+const params = new URLSearchParams(location.search);
+const hook = HOOKS[params.get("h")] ? params.get("h") : "adhd";
+const H = HOOKS[hook];
+const $ = id => document.getElementById(id);
+
+/* render copy */
+document.title = "Earned";
+$("h1").textContent = H.h1;
+$("sub").textContent = H.sub;
+$("statusText").textContent = H.status;
+$("bullet2").textContent = H.bullet2;
+$("qLabel").textContent = H.qLabel;
+$("hookField").value = hook;
+$("steps").innerHTML = H.steps.map(([t,d]) => `<li><div><strong>${t}</strong><span class="mute">${d}</span></div></li>`).join("");
+$("q").innerHTML = `<option value="" disabled selected>Choose one</option>` + H.options.map(o => `<option>${o}</option>`).join("");
+$("tasks").innerHTML = H.tasks.map((t,i) => `<li><button type="button" aria-pressed="false" data-i="${i}"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#1B1406" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="t">${t}</span></button></li>`).join("");
+
+/* clock */
+const now = new Date();
+$("clock").textContent = now.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}).replace(/\s?[AP]M/i,"");
+$("date").textContent = now.toLocaleDateString([], {weekday:"long", day:"numeric", month:"long"});
+
+/* the one interactive moment: tick everything, page unlocks */
+const btns = [...document.querySelectorAll(".tasks button")];
+btns.forEach(b => b.addEventListener("click", () => {
+  b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true");
+  const done = btns.every(x => x.getAttribute("aria-pressed") === "true");
+  document.documentElement.dataset.state = done ? "unlocked" : "locked";
+  $("statusText").textContent = done ? "Unlocked. Have a good one." : H.status;
+  $("hint").textContent = done ? "That feeling, every morning. Start the trial below." : "Tap the boxes. That's the whole app.";
+  if (done) track("Lead", {content_name: "demo_unlocked"});
+}));
+
+/* checkout links */
+const links = CONFIG.stripe[hook];
+const yearHref = links.year, weekHref = links.week;
+$("ctaYear").href = yearHref;
+$("ctaWeek").href = weekHref;
+[["ctaYear","year"],["ctaWeek","week"]].forEach(([id,plan]) => {
+  $(id).addEventListener("click", () => track("InitiateCheckout", {content_name: `${hook}_${plan}`, value: plan==="year"?34.99:5.99, currency:"GBP"}));
+});
+$("cta1").addEventListener("click", () => track("ViewContent", {content_name: `${hook}_pricing`}));
+
+/* waitlist */
+$("waitlist").action = CONFIG.formEndpoint;
+$("waitlist").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = e.target;
+  try {
+    const r = await fetch(f.action, {method:"POST", body:new FormData(f), headers:{Accept:"application/json"}});
+    if (!r.ok) throw 0;
+    f.querySelectorAll("input,select,button").forEach(x => x.disabled = true);
+    $("ok").style.display = "block";
+    track("Lead", {content_name: `${hook}_waitlist`});
+  } catch { alert("That didn't send. Try again in a moment."); }
+});
+$("contact").href = "mailto:" + CONFIG.contactEmail;
+
+/* Meta pixel (disabled until an id is set) */
+function track(ev, data){ if (window.fbq) fbq("track", ev, data); }
+if (CONFIG.pixelId && !CONFIG.pixelId.startsWith("META_")) {
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq("init", CONFIG.pixelId); fbq("track", "PageView");
+}
+</script>
+</body>
+</html>
